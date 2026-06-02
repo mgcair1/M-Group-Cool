@@ -1,0 +1,47 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper: المستخدم مسجل دخول؟
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // صور الفنيين (قبل/بعد الصيانة) - ملف لكل أمر تشغيل
+    match /work-orders/{orderId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn()
+                   && request.resource.size < 5 * 1024 * 1024  // أقصى حد 5 MB
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // مستندات الشركة (السجل التجاري، البطاقة الضريبية، إلخ)
+    match /documents/{docId}/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn()
+                   && request.resource.size < 10 * 1024 * 1024  // أقصى حد 10 MB
+                   && (
+                     request.resource.contentType.matches('image/.*') ||
+                     request.resource.contentType == 'application/pdf'
+                   );
+    }
+
+    // شعار الشركة وصور الإعدادات
+    match /company-assets/{fileName} {
+      allow read: if true;  // متاح للجميع (يظهر في الفواتير المطبوعة)
+      allow write: if isSignedIn()
+                   && request.resource.size < 2 * 1024 * 1024  // أقصى حد 2 MB
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // النسخ الاحتياطية (للمشرفين فقط)
+    match /backups/{fileName} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    // افتراضياً: ممنوع كل شيء آخر
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,174 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (Default-Deny Catch-All)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Checking if the user has an admin role via explicitly accessing their user doc.
+    // Notice that custom claims are not used as per the skill instructions.
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (getUserData().role == 'super_admin' || getUserData().role == 'admin')
+      );
+    }
+
+    function isManager() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (getUserData().role == 'super_admin' || getUserData().role == 'admin' || getUserData().role == 'manager')
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- COLLECTION RULES ---
+
+    // 1. Users collection
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      allow list: if isAdmin();
+      allow create: if isSignedIn() && (isOwner(userId) || isAdmin());
+      allow update: if isSignedIn() && (isOwner(userId) || isAdmin()) && (
+        // Block standard users from changing their own role to super_admin or admin
+        (!incoming().diff(existing()).affectedKeys().hasAny(['role']) || isAdmin())
+      );
+      allow delete: if isAdmin();
+    }
+
+    // 2. Customers
+    match /customers/{customerId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || getUserData().role == 'sales' || getUserData().role == 'assistant';
+      allow delete: if isAdmin();
+    }
+
+    // 3. Devices subcollection
+    match /customers/{customerId}/devices/{deviceId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || getUserData().role == 'technician' || getUserData().role == 'assistant';
+      allow delete: if isAdmin();
+    }
+
+    // 4. Maintenance / Operations Orders
+    match /maintenance_orders/{orderId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || getUserData().role == 'technician' || getUserData().role == 'assistant' || getUserData().role == 'accountant';
+      allow delete: if isAdmin();
+    }
+
+    // 5. Installation Orders
+    match /installation_orders/{orderId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || getUserData().role == 'technician' || getUserData().role == 'assistant';
+      allow delete: if isAdmin();
+    }
+
+    // 6. Contracts
+    match /contracts/{contractId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || getUserData().role == 'sales' || getUserData().role == 'accountant';
+      allow delete: if isAdmin();
+    }
+
+    // 7. Invoices
+    match /invoices/{invoiceId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || getUserData().role == 'accountant';
+      allow delete: if isAdmin();
+    }
+
+    // 8. Payments
+    match /payments/{paymentId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || getUserData().role == 'accountant';
+      allow delete: if isAdmin();
+    }
+
+    // 9. Expenses
+    match /expenses/{expenseId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || getUserData().role == 'accountant';
+      allow delete: if isAdmin();
+    }
+
+    // 10. Employees
+    match /employees/{employeeId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // 11. Attendance Records (Subcollection of employees)
+    match /employees/{employeeId}/attendance/{attendanceId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || isOwner(getUserData().id) || getUserData().role == 'assistant';
+      allow delete: if isAdmin();
+    }
+
+    // 12. Suppliers
+    match /suppliers/{supplierId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || getUserData().role == 'accountant';
+      allow delete: if isAdmin();
+    }
+
+    // 13. Products
+    match /products/{productId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || getUserData().role == 'accountant';
+      allow delete: if isAdmin();
+    }
+
+    // 14. Inventory Movements
+    match /inventory_movements/{movementId} {
+      allow read: if isSignedIn();
+      allow create, update: if isManager() || getUserData().role == 'accountant';
+      allow delete: if isAdmin();
+    }
+
+    // 15. Notifications
+    match /notifications/{notificationId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isAdmin();
+    }
+
+    // 16. Settings
+    match /settings/{settingsId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // 17. Backups
+    match /backups/{backupId} {
+      allow read: if isManager();
+      allow write: if isAdmin();
+    }
+  }
+}

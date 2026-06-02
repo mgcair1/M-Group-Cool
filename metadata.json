@@ -1,0 +1,6 @@
+{
+  "name": "M Group Cool ERP & CRM",
+  "description": "نظام ERP و CRM متكامل باللغة العربية لإدارة عمليات الفواتير والعملاء وعقود الصيانة والحضور والمخازن والذكاء الاصطناعي لشركة M Group Cool للتكييف والصيانة في مصر.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

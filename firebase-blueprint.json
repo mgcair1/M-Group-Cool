@@ -1,0 +1,352 @@
+{
+  "entities": {
+    "User": {
+      "title": "مستخدم النظام",
+      "description": "بيانات مستخدم النظام بجميع الصلاحيات",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "رقم تعريف المستخدم في FirebaseAuth" },
+        "email": { "type": "string", "format": "email", "description": "البريد الإلكتروني للمستخدم" },
+        "name": { "type": "string", "description": "الاسم الكامل للمستخدم" },
+        "phone": { "type": "string", "description": "رقم الهاتف" },
+        "role": { "type": "string", "enum": ["super_admin", "admin", "manager", "accountant", "technician", "assistant", "sales", "viewer"], "description": "الصلاحية الممنوحة للمستخدم" },
+        "needsPasswordChange": { "type": "boolean", "description": "مؤشر لطلب تغيير كلمة المرور عند أول تسجيل دخول" }
+      },
+      "required": ["uid", "email", "name", "role"]
+    },
+    "Customer": {
+      "title": "العميل",
+      "description": "بيانات العميل في نظام CRM",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "معرف تلقائي CUS-000001" },
+        "name": { "type": "string", "description": "اسم العميل بالكامل" },
+        "phone": { "type": "string", "description": "رقم الهاتف الأساسي" },
+        "phone2": { "type": "string", "description": "رقم الهاتف الإضافي" },
+        "email": { "type": "string", "description": "البريد الإلكتروني للعميل" },
+        "address": { "type": "string", "description": "العنوان التفصيلي للعميل" },
+        "governorate": { "type": "string", "description": "المحافظة" },
+        "region": { "type": "string", "description": "المنطقة" },
+        "customerSource": { "type": "string", "description": "مصدر العميل (على سبيل المثال فيسبوك، توصية، إلخ)" },
+        "notes": { "type": "string", "description": "ملاحظات إضافية حول العميل" },
+        "rating": { "type": "number", "description": "تقييم العميل" },
+        "createdAt": { "type": "string", "description": "تاريخ إنشاء العميل" },
+         "location": {
+          "type": "object",
+          "properties": {
+            "latitude": { "type": "number" },
+            "longitude": { "type": "number" },
+            "address": { "type": "string" }
+          },
+          "description": "موقع العميل الجغرافي على خرائط جوجل"
+        }
+      },
+      "required": ["id", "name", "phone"]
+    },
+    "Device": {
+      "title": "جهاز التكييف",
+      "description": "أجهزة التكييف التابعة لكل عميل",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerId": { "type": "string" },
+        "brand": { "type": "string" },
+        "type": { "type": "string", "description": "نوع الجهاز (سبليت، مركزي، كونسيلد، إلخ)" },
+        "capacity": { "type": "string", "description": "القدرة (على سبيل المثال 1.5 حصان، 3 حصان)" },
+        "serialNumber": { "type": "string" },
+        "installationDate": { "type": "string" },
+        "warranty": { "type": "string", "description": "حالة أو تفاصيل الضمان" }
+      },
+      "required": ["id", "customerId", "brand", "type", "capacity"]
+    },
+    "MaintenanceOrder": {
+      "title": "أمر تشغيل / صيانة",
+      "description": "بيانات أمر الصيانة والتشغيل ومتابعة الفنيين",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "WO-YYYY-000001" },
+        "customerId": { "type": "string" },
+        "deviceId": { "type": "string" },
+        "technicianId": { "type": "string" },
+        "assistantId": { "type": "string" },
+        "serviceType": { "type": "string", "description": "نوع الخدمة المطلوبة" },
+        "status": { "type": "string", "enum": ["new", "in_progress", "completed", "cancelled"] },
+        "date": { "type": "string" },
+        "cost": { "type": "number" },
+        "collectionAmount": { "type": "number", "description": "المبلغ المحصل" },
+        "expenses": { "type": "number", "description": "المصروفات المستهلكة" },
+        "photoBefore": { "type": "string" },
+        "photoAfter": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "customerId", "serviceType", "status", "date"]
+    },
+    "InstallationOrder": {
+      "title": "أمر تركيب تكييف",
+      "description": "بيانات تفصيلية خاصة بعملية تركيب أجهزة جديدة",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerId": { "type": "string" },
+        "deviceId": { "type": "string" },
+        "date": { "type": "string" },
+        "technicianId": { "type": "string" },
+        "status": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "customerId", "date", "status"]
+    },
+    "Contract": {
+      "title": "عقد الصيانة",
+      "description": "عقود الصيانة السنوية أو الدورية للعملاء",
+      "type": "object",
+      "properties": {
+        "contractNumber": { "type": "string" },
+        "customerId": { "type": "string" },
+        "value": { "type": "number" },
+        "devicesCount": { "type": "number" },
+        "visitsCount": { "type": "number" },
+        "startDate": { "type": "string" },
+        "endDate": { "type": "string" }
+      },
+      "required": ["contractNumber", "customerId", "value", "startDate", "endDate"]
+    },
+    "Invoice": {
+      "title": "الفاتورة",
+      "description": "فاتورة المبيعات أو عروض الأسعار والخدمات",
+      "type": "object",
+      "properties": {
+        "invoiceNumber": { "type": "string", "description": "INV-YYYY-000001" },
+        "type": { "type": "string", "enum": ["quote", "invoice", "tax_invoice"] },
+        "customerId": { "type": "string" },
+        "vatRate": { "type": "number", "description": "نسبة الضريبة (14% بشكل افتراضي)" },
+        "subtotal": { "type": "number" },
+        "vatAmount": { "type": "number" },
+        "totalAmount": { "type": "number" },
+        "items": { "type": "array" },
+        "date": { "type": "string" },
+        "status": { "type": "string", "enum": ["draft", "paid", "partially_paid", "unpaid"] }
+      },
+      "required": ["invoiceNumber", "type", "customerId", "subtotal", "totalAmount", "date", "status"]
+    },
+    "Payment": {
+      "title": "المدفوعات والتحصيلات",
+      "description": "سجل دفعات الفواتير وعقود الصيانة",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "invoiceId": { "type": "string" },
+        "customerId": { "type": "string" },
+        "amount": { "type": "number" },
+        "paymentDate": { "type": "string" },
+        "paymentType": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "invoiceId", "amount", "paymentDate"]
+    },
+    "Expense": {
+      "title": "المصروفات",
+      "description": "تسجيل المصروفات الإدارية والمخزنية ومستلزمات العمل",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "amount": { "type": "number" },
+        "category": { "type": "string" },
+        "date": { "type": "string" },
+        "description": { "type": "string" },
+        "paidTo": { "type": "string" }
+      },
+      "required": ["id", "amount", "category", "date"]
+    },
+    "Employee": {
+      "title": "الموظف",
+      "description": "بيانات موظفي وفنيي الشركة والرواتب",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "jobTitle": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "salary": { "type": "number" },
+        "hireDate": { "type": "string" },
+        "commissionRate": { "type": "number", "description": "نسبة عمولة المبيعات أو الصيانة إن وجدت" },
+        "partnershipType": { "type": "string", "enum": ["none", "30/70", "40/60", "50/50"], "description": "نوع الشراكة إن وجد" }
+      },
+      "required": ["id", "name", "jobTitle", "salary"]
+    },
+    "AttendanceRecord": {
+      "title": "سجل الحضور والانصراف",
+      "description": "بيانات تسجيل الحضور والغياب للموظفين والاحتساب المالي",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "employeeId": { "type": "string" },
+        "date": { "type": "string" },
+        "checkIn": { "type": "string" },
+        "checkOut": { "type": "string" },
+        "workingHours": { "type": "number" },
+        "overtimeHours": { "type": "number" },
+        "status": { "type": "string", "enum": ["present", "absent", "vacation", "holiday"] }
+      },
+      "required": ["id", "employeeId", "date", "status"]
+    },
+    "Supplier": {
+      "title": "المورد",
+      "description": "بيانات موردي قطع الغيار والمستلزمات",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "contactPerson": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "name", "phone"]
+    },
+    "Product": {
+      "title": "الصنف والمخزون",
+      "description": "أصناف قطع الغيار والمعدات والكميات المتوفرة",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "quantity": { "type": "number" },
+        "reorderLevel": { "type": "number", "description": "الحد الأدني لإعادة الطلب والتنبيه" },
+        "category": { "type": "string" },
+        "price": { "type": "number" },
+        "cost": { "type": "number" }
+      },
+      "required": ["id", "name", "quantity", "reorderLevel", "price"]
+    },
+    "InventoryMovement": {
+      "title": "حركة المخازن",
+      "description": "سجل حركات الوارد والمنصرف من المخزن",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "productId": { "type": "string" },
+        "type": { "type": "string", "enum": ["in", "out"] },
+        "quantity": { "type": "number" },
+        "date": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "productId", "type", "quantity", "date"]
+    },
+    "Notification": {
+      "title": "التنبيهات والإشعارات",
+      "description": "تنبيهات النظام بخصوص العقود والصيانة والمخزون",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "date": { "type": "string" },
+        "type": { "type": "string" },
+        "read": { "type": "boolean" },
+        "soundEnabled": { "type": "boolean" }
+      },
+      "required": ["id", "title", "body", "date", "read"]
+    },
+    "Settings": {
+      "title": "إعدادات النظام",
+      "description": "إعدادات الهوية والألوان والضرائب والعمولات بدون تعديل برمجي",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string" },
+        "logoUrl": { "type": "string" },
+        "primaryColor": { "type": "string" },
+        "secondaryColor": { "type": "string" },
+        "vatRate": { "type": "number" },
+        "attendanceCheckIn": { "type": "string" },
+        "attendanceCheckOut": { "type": "string" },
+        "soundName": { "type": "string" }
+      },
+      "required": ["companyName", "vatRate"]
+    },
+    "Backup": {
+      "title": "النسخ الاحتياطي",
+      "description": "سجلات النسخ الاحتياطي للنظام",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "backupUrl": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["id", "date"]
+    }
+  },
+  "firestore": {
+    "users": {
+      "schema": "User",
+      "description": "قائمة مستخدمي النظام والصلاحيات"
+    },
+    "customers": {
+      "schema": "Customer",
+      "description": "قائمة عملاء الشركة وإدارتهم"
+    },
+    "customers/{customerId}/devices": {
+      "schema": "Device",
+      "description": "الأجهزة الخاصة بكل عميل"
+    },
+    "maintenance_orders": {
+      "schema": "MaintenanceOrder",
+      "description": "أوامر التشغيل والصيانة لجميع العملاء"
+    },
+    "installation_orders": {
+      "schema": "InstallationOrder",
+      "description": "أوامر التشغيل والتركيب لجميع العملاء"
+    },
+    "contracts": {
+      "schema": "Contract",
+      "description": "عقود الصيانة الدورية للعملاء"
+    },
+    "invoices": {
+      "schema": "Invoice",
+      "description": "الفواتير وعروض الأسعار"
+    },
+    "payments": {
+      "schema": "Payment",
+      "description": "سندات القبض والدفعات المالية للعملاء"
+    },
+    "expenses": {
+      "schema": "Expense",
+      "description": "المصروفات التشغيلية والإدارية"
+    },
+    "employees": {
+      "schema": "Employee",
+      "description": "الموظفين والفنيين والشركاء"
+    },
+    "employees/{employeeId}/attendance": {
+      "schema": "AttendanceRecord",
+      "description": "سجل الحضور والانصراف وعمليات الموظف"
+    },
+    "suppliers": {
+      "schema": "Supplier",
+      "description": "موردي قطع الغيار والمستلزمات للشركة"
+    },
+    "products": {
+      "schema": "Product",
+      "description": "الأصناف والمعدات المتوفرة في المخزن"
+    },
+    "inventory_movements": {
+      "schema": "InventoryMovement",
+      "description": "حركات الأصناف والمورد والمصروف"
+    },
+    "notifications": {
+      "schema": "Notification",
+      "description": "التنبيهات والإشعارات العامة"
+    },
+    "settings": {
+      "schema": "Settings",
+      "description": "إعدادات النظام والهوية البصرية"
+    },
+    "backups": {
+      "schema": "Backup",
+      "description": "سجلات تصدير واستيراد البيانات الاحتياطية"
+    }
+  }
+}
