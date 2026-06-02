@@ -1,0 +1,44 @@
+{
+  "name": "M Group Cool - Dev Container",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "forwardPorts": [8080, 5173, 5000],
+  "portsAttributes": {
+    "8080": {
+      "label": "App Server",
+      "onAutoForward": "openBrowser"
+    },
+    "5173": {
+      "label": "Vite Dev Server",
+      "onAutoForward": "openBrowser"
+    },
+    "5000": {
+      "label": "Firebase Emulator",
+      "onAutoForward": "silent"
+    }
+  },
+  "postCreateCommand": "npm install && npm install -g firebase-tools",
+  "postAttachCommand": {
+    "welcome": "echo '\\n🎉 مرحباً بك في M Group Cool!\\n\\n📖 ابدأ من ملف: ابدأ_من_هنا.md\\n\\n🚀 الأوامر الأساسية:\\n   firebase login --no-localhost   - تسجيل دخول Firebase\\n   firebase use --add              - اختيار المشروع\\n   npm run deploy                  - نشر التطبيق\\n   npm run dev                     - تشغيل محلي\\n'"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "toba.vsfire",
+        "GoogleCloudTools.cloudcode"
+      ],
+      "settings": {
+        "editor.tabSize": 2,
+        "editor.formatOnSave": false,
+        "files.eol": "\n",
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "remoteUser": "node"
+}

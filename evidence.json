@@ -1,0 +1,215 @@
+[
+  {
+    "module": "Customers (incl. Profile / Visits page)",
+    "route": "list • add • profile (Visits) • roi",
+    "before": "BEFORE-STACK: Cannot read properties of undefined (reading 'toLocaleString')\nTypeError: Cannot read properties of undefined (reading 'toLocaleString')\n    at main (/home/user/M-Group-Cool-/audit/evidence-audit.tsx:94:28)",
+    "after": "profile-view-renders: true | edit-modal-renders: true | rating-stars-count: 5 | rating-persisted: 5 → 3",
+    "crud": [
+      {
+        "op": "addCustomer",
+        "ok": true,
+        "note": "CUS-000004"
+      },
+      {
+        "op": "updateCustomer",
+        "ok": true,
+        "note": "rating→5"
+      },
+      {
+        "op": "deleteCustomer",
+        "ok": true,
+        "note": "removed"
+      },
+      {
+        "op": "addDevice",
+        "ok": true,
+        "note": "DEV-TEXZ4YTF4"
+      },
+      {
+        "op": "updateDevice",
+        "ok": true,
+        "note": "capacity→2.25"
+      },
+      {
+        "op": "deleteDevice",
+        "ok": true,
+        "note": "removed"
+      }
+    ]
+  },
+  {
+    "module": "Work Orders",
+    "route": "list • add • edit-modal • status-filter (all/new/in_progress/completed)",
+    "before": "BEFORE-STACK (tsc):\n  src/components/WorkOrdersModule.tsx(79,36): error TS2339:\n    Property 'priority' does not exist on type 'MaintenanceOrder'.\n  src/components/WorkOrdersModule.tsx(420,21): error TS2353:\n    Object literal may only specify known properties, and 'priority'\n    does not exist in type 'Partial<MaintenanceOrder>'.",
+    "after": "edit-modal-renders: true | save-no-throw: true | delete-via-UI: true (orders 4→3)",
+    "crud": [
+      {
+        "op": "addOrder (with priority)",
+        "ok": true,
+        "note": "WO-2026-000004"
+      },
+      {
+        "op": "updateOrder priority",
+        "ok": true,
+        "note": "priority→low"
+      },
+      {
+        "op": "completeOrder→autoInvoice",
+        "ok": true,
+        "note": "invoices 2→3"
+      },
+      {
+        "op": "deleteOrder",
+        "ok": true,
+        "note": "removed"
+      }
+    ]
+  },
+  {
+    "module": "Invoices (incl. Preview & PDF generation)",
+    "route": "list • add • print (preview/PDF)",
+    "before": "BEFORE-STACK: no exception, but lookup silently returned undefined.\n  invoices.find(i => i.id === selectedInvoiceId)  ⇒  undefined\n  while the row passed setSelectedInvoiceId(i.id)  ⇒  i.id was undefined\n  ⇒ selectedInvoice = undefined ⇒ '{activeTab === \"print\" && selectedInvoice && (…)}'\n    short-circuited to null ⇒ preview region rendered nothing\n    ⇒ PDF button never mounted ⇒ user saw a white panel.",
+    "after": "print-button-present: true | preview-rendered: true | pdf-button-present: true (label: اطبع المستند الحالي / حفظ PDF) | pdf-click-invoked-window.print: true",
+    "crud": [
+      {
+        "op": "addInvoice",
+        "ok": true,
+        "note": "INV-2026-000004 total=1140"
+      },
+      {
+        "op": "updateInvoice (VAT recalc)",
+        "ok": true,
+        "note": "subtotal=2000 vat=280 total=2280"
+      },
+      {
+        "op": "updateInvoice status",
+        "ok": true,
+        "note": "status→paid"
+      },
+      {
+        "op": "deleteInvoice",
+        "ok": true,
+        "note": "removed"
+      },
+      {
+        "op": "addPayment",
+        "ok": true,
+        "note": "PAY-DHPP4R3QW"
+      },
+      {
+        "op": "updatePayment",
+        "ok": true,
+        "note": "amount→75"
+      },
+      {
+        "op": "deletePayment",
+        "ok": true,
+        "note": "removed"
+      }
+    ]
+  },
+  {
+    "module": "Payroll",
+    "route": "employees • attendance • partnership",
+    "before": "BEFORE-STACK: Cannot read properties of undefined (reading 'toLocaleString')\nTypeError: Cannot read properties of undefined (reading 'toLocaleString')\n    at main (/home/user/M-Group-Cool-/audit/evidence-audit.tsx:371:26)\n  → triggered inside EmployeePayrollModule render: <strong>{emp.baseSalary.toLocaleString('ar-EG')} ج.م</strong>",
+    "after": "employees-tab-renders: true | attendance-tab-renders: true | partnership-tab-renders: true",
+    "crud": [
+      {
+        "op": "addEmployee",
+        "ok": true,
+        "note": "EMP-004"
+      },
+      {
+        "op": "updateEmployee",
+        "ok": true,
+        "note": "baseSalary→8000"
+      },
+      {
+        "op": "deleteEmployee",
+        "ok": true,
+        "note": "removed"
+      },
+      {
+        "op": "addAttendance",
+        "ok": true,
+        "note": "ATT-M34TSJY8Y"
+      },
+      {
+        "op": "updateAttendance",
+        "ok": true,
+        "note": "status→absent"
+      },
+      {
+        "op": "deleteAttendance",
+        "ok": true,
+        "note": "removed"
+      }
+    ]
+  },
+  {
+    "module": "Inventory & Warehouse",
+    "route": "products • suppliers • suppliers_ledger • assets • vehicles",
+    "before": "BEFORE-STACK: Cannot read properties of undefined (reading 'toLocaleString')\nTypeError: Cannot read properties of undefined (reading 'toLocaleString')\n    at main (/home/user/M-Group-Cool-/audit/evidence-audit.tsx:435:26)\n  → triggered inside InventoryModule render: <td>{p.sellPrice.toLocaleString('ar-EG')} ج.م</td>",
+    "after": "products-tab-renders: true\n  subtabs: سجل الموردين المعتمدين: OK | حسابات ومديونية: OK | سجل الأصول: OK | أسطول سيارات: OK",
+    "crud": [
+      {
+        "op": "addProduct",
+        "ok": true,
+        "note": "PRD-004"
+      },
+      {
+        "op": "updateProduct qty",
+        "ok": true,
+        "note": "qty→5"
+      },
+      {
+        "op": "low-stock notification",
+        "ok": true,
+        "note": "notifications 8→9"
+      },
+      {
+        "op": "deleteProduct",
+        "ok": true,
+        "note": "removed"
+      },
+      {
+        "op": "addSupplier",
+        "ok": true,
+        "note": "SUP-002"
+      },
+      {
+        "op": "updateSupplier",
+        "ok": true,
+        "note": "phone→012"
+      },
+      {
+        "op": "deleteSupplier",
+        "ok": true,
+        "note": "removed"
+      }
+    ]
+  },
+  {
+    "module": "Operations Portal (Enterprise)",
+    "route": "cust_portal • tech_portal • hvac_box • partners • diagnose (KB) • designer",
+    "before": "BEFORE-STACK: no exception, silent corruption:\n  subtotal=1000 vatRate=undefined ⇒ vatAmt=NaN (NaN) total=NaN (NaN)\n  → Operations Portal partner-dashboard rendered \"NaN ج.م\" for splits.",
+    "after": "tabs:\n    بوابة العميل الذكية: OK (8658b)\n    لوحة تحكم الفني الميدانية للتشغيل: OK (9598b)\n    حاسبات الأحمال والتكييف المتقدمة: OK (28798b)\n    شراكة الأرباح والمستحقات: OK (12038b)\n    دليل الأعطال والتشخيص الذكي: OK (9471b)\n    مصمم النظام المتقدم: OK (15551b)",
+    "crud": [
+      {
+        "op": "addOrder via portal API",
+        "ok": true,
+        "note": "WO-2026-000004"
+      },
+      {
+        "op": "updateSettings (knowledgeBase)",
+        "ok": true,
+        "note": "KB entry added"
+      },
+      {
+        "op": "updateSettings (partnerWithdrawals)",
+        "ok": true,
+        "note": "withdrawal added"
+      }
+    ]
+  }
+]
