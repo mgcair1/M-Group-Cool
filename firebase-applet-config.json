@@ -1,10 +1,11 @@
-{
-  "projectId": "amped-wording-flkqp",
-  "appId": "1:903895057186:web:b189e6b48372068a2edb7b",
-  "apiKey": "AIzaSyBmdIxlqzQjXwJsYDnqQCMb8ee2pjbjaPs",
-  "authDomain": "amped-wording-flkqp.firebaseapp.com",
+
+  {
+  "projectId": "m-group-cool",
+  "appId": "1:683557424156:web:eef6a153972224eb6e63d9",
+  "apiKey": "AIzaSyAScdMaZuL-QF9s11VIOAPPLB5ol9YUxyI",
+  "authDomain": "m-group-cool.firebaseapp.com",
   "firestoreDatabaseId": "ai-studio-aa180f39-9166-4f5a-ad8e-ba2b09f7a5a0",
-  "storageBucket": "amped-wording-flkqp.firebasestorage.app",
-  "messagingSenderId": "903895057186",
-  "measurementId": ""
+  "storageBucket": "m-group-cool.firebasestorage.app",
+  "messagingSenderId": "683557424156",
+  "measurementId": "G-J0J8KCHRGV"
 }
